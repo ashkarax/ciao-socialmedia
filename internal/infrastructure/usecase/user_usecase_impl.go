@@ -200,12 +200,12 @@ func (r *UserUseCase) UserLogin(loginData *requestmodels.UserLoginReq) (response
 	}
 
 	accessToken, accessTokenerr := jwttoken.GenerateAcessToken(r.tokenSecurityKey.UserSecurityKey, userId)
-	if err != nil {
+	if err != accessTokenerr {
 		return resLogin, accessTokenerr
 	}
 
 	refreshToken, refreshTokenerr := jwttoken.GenerateRefreshToken(r.tokenSecurityKey.UserSecurityKey)
-	if err != nil {
+	if err != refreshTokenerr {
 		return resLogin, refreshTokenerr
 	}
 

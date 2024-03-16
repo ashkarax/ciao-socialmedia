@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/ashkarax/ciao-socialmedia/internal/config"
 	"github.com/ashkarax/ciao-socialmedia/internal/infrastructure/handler"
@@ -15,9 +16,19 @@ type ServerHttp struct {
 	config *config.PortManager
 }
 
-func NewServerHttp(config *config.PortManager, userHandler *handler.UserHandler) *ServerHttp {
+func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, userHandler *handler.UserHandler) *ServerHttp {
 
 	engin := gin.Default()
+
+	engin.Use(func(c *gin.Context) {
+		apiKey := c.GetHeader("x-api-Key")
+		if apiKey != apikey.Key {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	})
 
 	//routes.AdminRoutes(engin.Group("/admin"), adminHandler)
 	routes.UserRoutes(engin.Group(""), userHandler)

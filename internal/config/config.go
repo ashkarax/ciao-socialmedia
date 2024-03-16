@@ -4,6 +4,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+type ApiKey struct {
+	Key string `mapstructure:"API_KEY"`
+}
+
 type PortManager struct {
 	RunnerPort string `mapstructure:"PORTNO"`
 }
@@ -31,6 +35,7 @@ type Smtp struct {
 }
 
 type Config struct {
+	ApiKey   ApiKey
 	PortMngr PortManager
 	DB       DataBase
 	Token    Token
@@ -42,6 +47,7 @@ func LoadConfig() (*Config, error) {
 	var db DataBase
 	var token Token
 	var smtp Smtp
+	var apikey ApiKey
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
@@ -68,8 +74,12 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = viper.Unmarshal(&apikey)
+	if err != nil {
+		return nil, err
+	}
 
-	config := Config{PortMngr: portmngr, DB: db, Token: token, Smtp: smtp}
+	config := Config{ApiKey: apikey,PortMngr: portmngr, DB: db, Token: token, Smtp: smtp }
 	return &config, nil
 
 }

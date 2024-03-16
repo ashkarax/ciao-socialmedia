@@ -13,6 +13,6 @@ type OtpVerification struct {
 }
 
 type UserLoginReq struct {
-	Email    string `json:"email"    validate:"required,gte=84"`
+	Email    string `json:"email"    validate:"required,gte=8"`
 	Password string `json:"password" validate:"required,min=4"`
 }

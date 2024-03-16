@@ -25,6 +25,6 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	serverHttp := server.NewServerHttp(&config.PortMngr, userHandler)
+	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, userHandler)
 	return serverHttp, nil
 }

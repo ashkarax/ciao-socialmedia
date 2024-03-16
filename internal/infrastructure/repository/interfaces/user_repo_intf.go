@@ -16,4 +16,6 @@ type IUserRepo interface {
 	DeleteRecentOtpRequestsBefore5min() error
 	TemporarySavingUserOtp(int, string, time.Time) error
 	GetOtpInfo(string) (string, time.Time, error)
+
+	UpdateUserPassword(*string, *string) error
 }

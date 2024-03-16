@@ -134,3 +134,12 @@ func (d *UserRepo) GetOtpInfo(email string) (string, time.Time, error) {
 
 	return otpInfo.OTP, otpInfo.Expiration, nil
 }
+
+func (d *UserRepo) UpdateUserPassword(email *string, hashedPassword *string) error {
+	query := `UPDATE users SET password=$1 WHERE email=$2`
+	err := d.DB.Exec(query, *hashedPassword, *email).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

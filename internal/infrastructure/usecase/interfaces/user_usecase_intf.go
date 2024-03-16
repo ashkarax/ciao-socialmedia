@@ -7,6 +7,9 @@ import (
 
 type IUserUseCase interface {
 	UserSignUp(*requestmodels.UserSignUpReq) (responsemodels.SignupData, error)
-	VerifyOtp(*requestmodels.OtpVerification, string) (responsemodels.OtpVerifResult, error)
+	VerifyOtp(*requestmodels.OtpVerification, *string) (responsemodels.OtpVerifResult, error)
 	UserLogin(*requestmodels.UserLoginReq) (responsemodels.UserLoginRes, error)
+
+	ForgotPasswordRequest(*requestmodels.ForgotPasswordReq) (responsemodels.ForgotPasswordRes, error)
+	ForgotPasswordActual(*requestmodels.ForgotPasswordData, *string) (responsemodels.ForgotPasswordData, error)
 }

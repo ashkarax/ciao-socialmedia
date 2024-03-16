@@ -100,7 +100,7 @@ func (r *UserUseCase) UserSignUp(userData *requestmodels.UserSignUpReq) (respons
 
 }
 
-func (r *UserUseCase) VerifyOtp(otpData *requestmodels.OtpVerification, TempVerificationToken string) (responsemodels.OtpVerifResult, error) {
+func (r *UserUseCase) VerifyOtp(otpData *requestmodels.OtpVerification, TempVerificationToken *string) (responsemodels.OtpVerifResult, error) {
 	var otpveriRes responsemodels.OtpVerifResult
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
@@ -116,7 +116,7 @@ func (r *UserUseCase) VerifyOtp(otpData *requestmodels.OtpVerification, TempVeri
 		}
 		return otpveriRes, errors.New("did't fullfill the login requirement ")
 	}
-	email, unbindErr := jwttoken.UnbindEmailFromClaim(TempVerificationToken, r.tokenSecurityKey.TempVerificationKey)
+	email, unbindErr := jwttoken.UnbindEmailFromClaim(*TempVerificationToken, r.tokenSecurityKey.TempVerificationKey)
 	if unbindErr != nil {
 		otpveriRes.Token = "invalid token"
 		return otpveriRes, unbindErr
@@ -212,5 +212,113 @@ func (r *UserUseCase) UserLogin(loginData *requestmodels.UserLoginReq) (response
 	resLogin.AccessToken = accessToken
 	resLogin.RefreshToken = refreshToken
 	return resLogin, nil
+
+}
+
+func (r *UserUseCase) ForgotPasswordRequest(userData *requestmodels.ForgotPasswordReq) (responsemodels.ForgotPasswordRes, error) {
+	var resData responsemodels.ForgotPasswordRes
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(userData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Email":
+					resData.Email = "Enter a valid email"
+				}
+				return resData, errors.New("did't fullfill the login requirement")
+			}
+		}
+	}
+	_, _, status, errr := r.UserRepo.GetHashPassAndStatus(userData.Email)
+	if errr != nil {
+		return resData, errr
+	}
+
+	if status == "blocked" {
+		return resData, errors.New("user is blocked by the admin")
+	}
+
+	if status == "pending" {
+		return resData, errors.New("user is on status pending,OTP not verified")
+	}
+
+	errRemv := r.UserRepo.DeleteRecentOtpRequestsBefore5min()
+	if errRemv != nil {
+		return resData, errRemv
+	}
+
+	otp := randomnumbergenerator.RandomNumber()
+	errOtp := gosmtp.SendRestPasswordEmailOtp(otp, userData.Email)
+	if errOtp != nil {
+		return resData, errOtp
+	}
+
+	expiration := time.Now().Add(5 * time.Minute)
+
+	errTempSave := r.UserRepo.TemporarySavingUserOtp(otp, userData.Email, expiration)
+	if errTempSave != nil {
+		fmt.Println("Cant save temporary data for otp verification in db")
+		return resData, errors.New("OTP verification down,please try after some time")
+	}
+
+	tempToken, err := jwttoken.TempTokenForOtpVerification(r.tokenSecurityKey.TempVerificationKey, userData.Email)
+	if err != nil {
+		resData.Token = "error creating temp token for otp verification"
+		return resData, errors.New("error creating token")
+	}
+
+	resData.Token = tempToken
+	return resData, nil
+}
+
+func (r *UserUseCase) ForgotPasswordActual(userData *requestmodels.ForgotPasswordData, TempVerificationToken *string) (responsemodels.ForgotPasswordData, error) {
+	var resData responsemodels.ForgotPasswordData
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(userData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Otp":
+					resData.Otp = "otp should be a 4 digit number"
+				case "Password":
+					resData.Password = "Password should have four or more digit"
+				case "ConfirmPassword":
+					resData.ConfirmPassword = "should match the first password"
+				}
+				return resData, errors.New("did't fullfill the login requirement")
+			}
+		}
+	}
+
+	email, unbindErr := jwttoken.UnbindEmailFromClaim(*TempVerificationToken, r.tokenSecurityKey.TempVerificationKey)
+	if unbindErr != nil {
+		resData.Token = "invalid token"
+		return resData, unbindErr
+	}
+
+	userOTP, expiration, errGetInfo := r.UserRepo.GetOtpInfo(email)
+	if errGetInfo != nil {
+		return resData, errGetInfo
+	}
+
+	if userData.Otp != userOTP {
+		return resData, errors.New("invalid OTP")
+	}
+	if time.Now().After(expiration) {
+		return resData, errors.New("OTP expired")
+	}
+
+	hashedPassword := hashpassword.HashPassword(userData.ConfirmPassword)
+
+	updateErr := r.UserRepo.UpdateUserPassword(&email, &hashedPassword)
+	if updateErr != nil {
+		return resData, updateErr
+	}
+
+	return resData, nil
 
 }

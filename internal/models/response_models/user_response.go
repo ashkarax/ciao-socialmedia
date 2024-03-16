@@ -25,3 +25,15 @@ type UserLoginRes struct {
 	AccessToken  string `json:"accesstoken,omitempty"`
 	RefreshToken string `json:"refreshtoken,omitempty"`
 }
+
+type ForgotPasswordRes struct {
+	Email string `json:"email,omitempty"`
+	Token string `json:"token,omitempty"`
+}
+
+type ForgotPasswordData struct {
+	Token           string `json:"token,omitempty"`
+	Otp             string `json:"otp,omitempty"`
+	Password        string `json:"password,omitempty"`
+	ConfirmPassword string `json:"confirmPassword,omitempty"`
+}

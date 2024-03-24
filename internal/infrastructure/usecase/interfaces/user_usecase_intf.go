@@ -12,4 +12,6 @@ type IUserUseCase interface {
 
 	ForgotPasswordRequest(*requestmodels.ForgotPasswordReq) (responsemodels.ForgotPasswordRes, error)
 	ForgotPasswordActual(*requestmodels.ForgotPasswordData, *string) (responsemodels.ForgotPasswordData, error)
+
+	UserProfile(*string) (*responsemodels.UserProfile, error)
 }

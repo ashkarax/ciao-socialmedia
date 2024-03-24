@@ -14,10 +14,10 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 	engin.POST("/forgotpassword", user.ForgotPasswordRequest)
 	engin.PATCH("/resetpassword", user.ResetPassword)
 
-	//engin.GET("/profile", user.GetUserProfile)
-
 	engin.Use(jwtMiddleWare.UserAuthorization)
 	{
+
+		engin.GET("/profile", user.GetUserProfile)
 
 		postmanagement := engin.Group("/post")
 		{

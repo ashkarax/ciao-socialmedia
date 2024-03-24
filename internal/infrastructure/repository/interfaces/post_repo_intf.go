@@ -11,4 +11,5 @@ type IPostRepo interface {
 	GetPostMediaById(*string) (*[]string, error)
 	DeletePostById(*string, *string) error
 	DeletePostMedias(*string) error
+	GetPostCountOfUser(*string) (uint, error)
 }

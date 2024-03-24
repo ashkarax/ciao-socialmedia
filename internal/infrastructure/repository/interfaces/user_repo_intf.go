@@ -4,6 +4,7 @@ import (
 	"time"
 
 	requestmodels "github.com/ashkarax/ciao-socialmedia/internal/models/request_models"
+	responsemodels "github.com/ashkarax/ciao-socialmedia/internal/models/response_models"
 )
 
 type IUserRepo interface {
@@ -18,4 +19,6 @@ type IUserRepo interface {
 	GetOtpInfo(string) (string, time.Time, error)
 
 	UpdateUserPassword(*string, *string) error
+
+	GetUserDataLite(*string) (*responsemodels.UserProfile, error)
 }

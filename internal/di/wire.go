@@ -28,13 +28,13 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	jwtUseCase := usecase.NewJWTUseCase(jwtRepo)
 	jwtMiddleWare := JWTmiddleware.NewJWTMiddleware(jwtUseCase, &config.Token)
 
-	userRepository := repository.NewUserRepository(DB)
-	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token)
-	userHandler := handler.NewUserHandler(userUseCase)
-
 	postRepository := repository.NewPostRepo(DB)
 	postUseCase := usecase.NewPostUseCase(postRepository)
 	postHandler := handler.NewPostHandler(postUseCase)
+
+	userRepository := repository.NewUserRepository(DB)
+	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token, postRepository)
+	userHandler := handler.NewUserHandler(userUseCase)
 
 	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, jwtMiddleWare, userHandler, postHandler)
 	return serverHttp, nil

@@ -20,10 +20,11 @@ import (
 type UserUseCase struct {
 	UserRepo         interfaceRepository.IUserRepo
 	tokenSecurityKey *config.Token
+	PostRepo         interfaceRepository.IPostRepo
 }
 
-func NewUserUseCase(userRepo interfaceRepository.IUserRepo, tokenSecurityKey *config.Token) interfaceUseCase.IUserUseCase {
-	return &UserUseCase{UserRepo: userRepo, tokenSecurityKey: tokenSecurityKey}
+func NewUserUseCase(userRepo interfaceRepository.IUserRepo, tokenSecurityKey *config.Token, postRepo interfaceRepository.IPostRepo) interfaceUseCase.IUserUseCase {
+	return &UserUseCase{UserRepo: userRepo, tokenSecurityKey: tokenSecurityKey, PostRepo: postRepo}
 }
 
 func (r *UserUseCase) UserSignUp(userData *requestmodels.UserSignUpReq) (responsemodels.SignupData, error) {
@@ -321,4 +322,18 @@ func (r *UserUseCase) ForgotPasswordActual(userData *requestmodels.ForgotPasswor
 
 	return resData, nil
 
+}
+
+func (r *UserUseCase) UserProfile(userId *string) (*responsemodels.UserProfile, error) {
+	userData, errU := r.UserRepo.GetUserDataLite(userId)
+	if errU != nil {
+		return nil, errU
+	}
+	PostCount, errP := r.PostRepo.GetPostCountOfUser(userId)
+	if errP != nil {
+		return nil, errP
+	}
+	userData.PostsCount = PostCount
+
+	return userData, nil
 }

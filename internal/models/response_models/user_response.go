@@ -37,3 +37,12 @@ type ForgotPasswordData struct {
 	Password        string `json:"password,omitempty"`
 	ConfirmPassword string `json:"confirmPassword,omitempty"`
 }
+
+type UserProfile struct {
+	Name           string `json:"name"`
+	UserName       string `json:"username"`
+	PostsCount     uint   `json:"posts_count"`
+	FollowersCount uint   `json:"followers_count"`
+	FollowingCount uint   `json:"following_count"`
+}
+

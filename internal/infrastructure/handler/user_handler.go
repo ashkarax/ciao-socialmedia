@@ -120,3 +120,18 @@ func (u *UserHandler) ResetPassword(c *gin.Context) {
 	response := responsemodels.Responses(http.StatusOK, "password updated success", resForgotPass, nil)
 	c.JSON(http.StatusOK, response)
 }
+
+func (u *UserHandler) GetUserProfile(c *gin.Context) {
+	userId, _ := c.Get("userId")
+	userIdString, _ := userId.(string)
+
+	userData, err := u.UserUseCase.UserProfile(&userIdString)
+	if err != nil {
+		finalReslt := responsemodels.Responses(http.StatusBadRequest, "failed to get user profile", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully retreival", userData, nil)
+	c.JSON(http.StatusOK, finalReslt)
+}

@@ -7,6 +7,7 @@ import (
 
 	interfaceRepository "github.com/ashkarax/ciao-socialmedia/internal/infrastructure/repository/interfaces"
 	requestmodels "github.com/ashkarax/ciao-socialmedia/internal/models/request_models"
+	responsemodels "github.com/ashkarax/ciao-socialmedia/internal/models/response_models"
 	"gorm.io/gorm"
 )
 
@@ -142,4 +143,14 @@ func (d *UserRepo) UpdateUserPassword(email *string, hashedPassword *string) err
 		return err
 	}
 	return nil
+}
+
+func (d *UserRepo) GetUserDataLite(userId *string) (*responsemodels.UserProfile, error) {
+	var resp responsemodels.UserProfile
+	query := "SELECT name,user_name FROM users WHERE id=$1"
+	err := d.DB.Raw(query, userId).Scan(&resp).Error
+	if err != nil {
+		return &resp, err
+	}
+	return &resp, nil
 }

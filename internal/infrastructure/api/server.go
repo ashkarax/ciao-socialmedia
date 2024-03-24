@@ -7,6 +7,7 @@ import (
 
 	"github.com/ashkarax/ciao-socialmedia/internal/config"
 	"github.com/ashkarax/ciao-socialmedia/internal/infrastructure/handler"
+	JWTmiddleware "github.com/ashkarax/ciao-socialmedia/internal/infrastructure/middleware"
 	"github.com/ashkarax/ciao-socialmedia/internal/infrastructure/routes"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ type ServerHttp struct {
 	config *config.PortManager
 }
 
-func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, userHandler *handler.UserHandler) *ServerHttp {
+func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, jwtMiddleWare *JWTmiddleware.JWTmiddleware, userHandler *handler.UserHandler, postHandler *handler.PostHandler) *ServerHttp {
 
 	engin := gin.Default()
 
@@ -31,7 +32,7 @@ func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, userHandle
 	})
 
 	//routes.AdminRoutes(engin.Group("/admin"), adminHandler)
-	routes.UserRoutes(engin.Group(""), userHandler)
+	routes.UserRoutes(engin.Group(""),jwtMiddleWare, userHandler, postHandler)
 
 	return &ServerHttp{engin: engin, config: config}
 

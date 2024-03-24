@@ -58,6 +58,12 @@ func ConnectDatabase(config *config.DataBase) (*gorm.DB, error) {
 	if err := DB.AutoMigrate(&domain.OtpInfo{}); err != nil {
 		return DB, err
 	}
+	if err := DB.AutoMigrate(&domain.Post{}); err != nil {
+		return DB, err
+	}
+	if err := DB.AutoMigrate(&domain.PostMedia{}); err != nil {
+		return DB, err
+	}
 
 	CheckAndCreateAdmin(DB)
 	return DB, nil

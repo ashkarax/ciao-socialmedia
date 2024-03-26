@@ -86,8 +86,8 @@ func (d *PostRepo) DeletePostMedias(postId *string) error {
 
 func (d *PostRepo) GetPostCountOfUser(userId *string) (uint, error) {
 	var count uint
-	query := "SELECT COUNT(*) FROM posts WHERE user_id=$1"
-	if err := d.DB.Raw(query, userId).Scan(&count).Error; err != nil {
+	query := "SELECT COUNT(*) FROM posts WHERE user_id=$1 AND post_status=$2"
+	if err := d.DB.Raw(query, userId, "normal").Scan(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil

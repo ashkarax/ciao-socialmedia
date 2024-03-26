@@ -23,7 +23,7 @@ func TempTokenForOtpVerification(securityKey string, email string) (string, erro
 func GenerateRefreshToken(secretKey string) (string, error) {
 
 	claims := jwt.MapClaims{
-		"exp": time.Now().Unix() + 3600000,
+		"exp": time.Now().Unix() + 604800,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -40,7 +40,7 @@ func GenerateRefreshToken(secretKey string) (string, error) {
 
 func GenerateAcessToken(securityKey string, id string) (string, error) {
 	claims := jwt.MapClaims{
-		"exp": time.Now().Unix() + 300,
+		"exp": time.Now().Unix() + 3600,
 		"id":  id,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -92,26 +92,32 @@ func VerifyAccessToken(token string, secretkey string) (string, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 				// Token is malformed
+				fmt.Println("malformed token")
 				return "", errors.New("malformed token")
 			} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 				claims, ok := parsedToken.Claims.(jwt.MapClaims)
 				if !ok {
+					fmt.Println("failed to extract token claims")
 					return "", errors.New("failed to extract claims")
 				}
 
 				id, ok := claims["id"].(string)
 				if !ok {
+					fmt.Println("id calim not found or not a string")
 					return "", errors.New("ID claim not found or not a string")
 				}
 
 				// Token is expired or not valid yet
+				fmt.Println("token expired")
 				return id, errors.New("expired token")
 			} else {
 				// Other validation errors
+				fmt.Println("validation error")
 				return "", errors.New("validation error")
 			}
 		} else {
 			// Other parsing errors
+			fmt.Println("other error:", err)
 			return "", err
 		}
 	}
@@ -119,11 +125,13 @@ func VerifyAccessToken(token string, secretkey string) (string, error) {
 	// If the token is valid, extract claims and return the ID
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
+		fmt.Println("token valid,but failed to extract claims")
 		return "", errors.New("failed to extract claims")
 	}
 
 	id, ok := claims["id"].(string)
 	if !ok {
+		fmt.Println("token valid,id claim not found or not a string")
 		return "", errors.New("ID claim not found or not a string")
 	}
 

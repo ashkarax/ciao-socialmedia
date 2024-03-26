@@ -42,7 +42,7 @@ func (d *PostRepo) AddNewPost(postData *requestmodels.AddPostData) error {
 func (d *PostRepo) GetAllActivePostByUser(userId *string) (*[]responsemodels.PostData, error) {
 	var response []responsemodels.PostData
 
-	query := "SELECT post_id,caption,created_at FROM posts WHERE user_id=$1 AND post_status=$2"
+	query := "SELECT post_id,caption,created_at FROM posts WHERE user_id=$1 AND post_status=$2 ORDER BY created_at DESC"
 	err := d.DB.Raw(query, userId, "normal").Scan(&response)
 	if err.Error != nil {
 		return &response, err.Error
@@ -52,7 +52,7 @@ func (d *PostRepo) GetAllActivePostByUser(userId *string) (*[]responsemodels.Pos
 func (d *PostRepo) GetPostMediaById(postId *string) (*[]string, error) {
 	var response []string
 
-	query := "SELECT media_url FROM post_media WHERE post_id=$1"
+	query := "SELECT media_url FROM post_media WHERE post_id=$1 ORDER BY media_id DESC"
 	err := d.DB.Raw(query, *postId).Scan(&response).Error
 	if err != nil {
 		return &response, err

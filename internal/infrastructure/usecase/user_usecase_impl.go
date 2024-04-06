@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/ashkarax/ciao-socialmedia/internal/config"
@@ -336,4 +337,28 @@ func (r *UserUseCase) UserProfile(userId *string) (*responsemodels.UserProfile, 
 	userData.PostsCount = PostCount
 
 	return userData, nil
+}
+
+func (r *UserUseCase) SearchUser(searchInput *requestmodels.SearchRequest) (*[]responsemodels.SearchResp, error) {
+
+	if searchInput.SearchText == "" {
+		return nil, fmt.Errorf("search input cannot be empty")
+	}
+
+	// Ensure search input length is within acceptable limits
+	if len(searchInput.SearchText) < 3 || len(searchInput.SearchText) > 50 {
+		return nil, fmt.Errorf("search input length must be between 3 and 50 characters")
+	}
+
+	// Ensure search input contains only alphanumeric characters, spaces, or underscores
+	validSearch := regexp.MustCompile(`^[a-zA-Z0-9_ ]+$`).MatchString
+	if !validSearch(searchInput.SearchText) {
+		return nil, fmt.Errorf("search input can only contain letters, numbers, spaces, or underscores")
+	}
+	usersSlice, errP := r.UserRepo.SearchUserByNameOrUserName(searchInput)
+	if errP != nil {
+		return nil, errP
+	}
+
+	return usersSlice, nil
 }

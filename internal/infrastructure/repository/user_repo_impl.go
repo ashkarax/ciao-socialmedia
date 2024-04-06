@@ -154,3 +154,13 @@ func (d *UserRepo) GetUserDataLite(userId *string) (*responsemodels.UserProfile,
 	}
 	return &resp, nil
 }
+
+func (d *UserRepo) SearchUserByNameOrUserName(searchInput *requestmodels.SearchRequest) (*[]responsemodels.SearchResp, error) {
+	var resp []responsemodels.SearchResp
+	query := "SELECT id,name,user_name FROM users WHERE ( name ILIKE $1 OR user_name ILIKE $1 ) AND status='active' AND id != $2"
+	err := d.DB.Raw(query, "%"+searchInput.SearchText+"%", searchInput.MyId).Scan(&resp).Error
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}

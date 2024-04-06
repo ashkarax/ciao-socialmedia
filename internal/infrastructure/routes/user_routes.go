@@ -27,7 +27,17 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 			//postmanagement.PATCH("/", post.EditPost)
 
 		}
+		// exploremanagement := engin.Group("/explore")
+		// {
+		// 	exploremanagement.GET("/")
 
+		searchmanagement := engin.Group("/search")
+		{
+			searchmanagement.GET("/", user.SearchUser)
+
+		}
 	}
+
+	// }
 
 }

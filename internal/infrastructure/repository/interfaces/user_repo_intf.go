@@ -21,4 +21,6 @@ type IUserRepo interface {
 	UpdateUserPassword(*string, *string) error
 
 	GetUserDataLite(*string) (*responsemodels.UserProfile, error)
+
+	SearchUserByNameOrUserName(*requestmodels.SearchRequest) (*[]responsemodels.SearchResp, error)
 }

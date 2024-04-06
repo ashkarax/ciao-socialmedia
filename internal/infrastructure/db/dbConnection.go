@@ -64,10 +64,12 @@ func ConnectDatabase(config *config.DataBase) (*gorm.DB, error) {
 	if err := DB.AutoMigrate(&domain.PostMedia{}); err != nil {
 		return DB, err
 	}
+	if err := DB.AutoMigrate(&domain.FollowRelationship{}); err != nil {
+		return DB, err
+	}
 
 	CheckAndCreateAdmin(DB)
 	return DB, nil
-
 }
 func CheckAndCreateAdmin(DB *gorm.DB) {
 	var count int

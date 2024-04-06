@@ -135,3 +135,27 @@ func (u *UserHandler) GetUserProfile(c *gin.Context) {
 	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully retreival", userData, nil)
 	c.JSON(http.StatusOK, finalReslt)
 }
+
+func (u *UserHandler) SearchUser(c *gin.Context) {
+	var searchInput requestmodels.SearchRequest
+
+	if err := c.BindJSON(&searchInput); err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:no json input)", nil, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	userId, _ := c.Get("userId")
+	userIdString, _ := userId.(string)
+
+	searchInput.MyId = userIdString
+
+	usersSlice, err := u.UserUseCase.SearchUser(&searchInput)
+	if err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "failed to find users", nil, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := responsemodels.Responses(http.StatusOK, "users found succesfully", usersSlice, nil)
+	c.JSON(http.StatusOK, response)
+}

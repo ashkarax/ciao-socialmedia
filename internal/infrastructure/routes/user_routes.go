@@ -34,6 +34,14 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 			postmanagement.DELETE("/", post.DeletePost)
 			//postmanagement.PATCH("/", post.EditPost)
 
+			postmanagement.GET("/userrelatedposts", post.GetAllRelatedPostsForHomeScreen)
+
+			likemanagement := postmanagement.Group("/like")
+			{
+				likemanagement.POST("/:postid", post.LikePost)
+				likemanagement.DELETE("/:postid", post.UnLikePost)
+			}
+
 		}
 		exploremanagement := engin.Group("/explore")
 		{

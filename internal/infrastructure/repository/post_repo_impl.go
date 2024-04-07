@@ -93,3 +93,33 @@ func (d *PostRepo) GetPostCountOfUser(userId *string) (uint, error) {
 	return count, nil
 
 }
+
+func (d *PostRepo) LikePost(inputData *requestmodels.LikeRequest) error {
+	query := "INSERT INTO post_likes (user_id,post_id,created_at) VALUES (?,?,?) ON CONFLICT (user_id, post_id) DO NOTHING;"
+	err := d.DB.Exec(query, inputData.UserID, inputData.PostID, time.Now()).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *PostRepo) UnLikePost(inputData *requestmodels.LikeRequest) error {
+	query := "DELETE FROM post_likes WHERE user_id=? AND post_id=?"
+	err := d.DB.Exec(query, inputData.UserID, inputData.PostID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *PostRepo) GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error) {
+	var response []responsemodels.PostData
+
+	query := "SELECT posts.*,CASE WHEN post_likes.user_id IS NULL THEN FALSE ELSE TRUE END AS is_liked FROM posts INNER JOIN follow_relationships ON posts.user_id = follow_relationships.following_id LEFT JOIN (SELECT post_id, user_id FROM post_likes WHERE user_id = $1) AS post_likes ON posts.post_id = post_likes.post_id WHERE follow_relationships.follower_id = $1 AND posts.post_status=$2 ORDER BY posts.created_at DESC;"
+	err := d.DB.Raw(query, userId, "normal").Scan(&response)
+	if err.Error != nil {
+		return &response, err.Error
+	}
+	return &response, nil
+
+}

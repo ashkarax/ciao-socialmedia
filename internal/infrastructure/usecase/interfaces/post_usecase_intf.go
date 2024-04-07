@@ -10,4 +10,9 @@ type IPostUseCase interface {
 	GetAllPostByUser(*string) (*[]responsemodels.PostData, error)
 
 	DeletePost(*requestmodels.PostId, *string) error
+
+	LikePost(*requestmodels.LikeRequest) error
+	UnLikePost(*requestmodels.LikeRequest) error
+
+	GetAllRelatedPostsForHomeScreen(*string) (*[]responsemodels.PostData, error)
 }

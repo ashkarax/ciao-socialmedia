@@ -10,9 +10,10 @@ type AddPostResp struct {
 }
 
 type PostData struct {
-	PostId    uint      `json:"postid"`
-	Caption   string    `json:"caption"`
-	CreatedAt time.Time `json:"-"`
+	PostId     uint      `json:"postid"`
+	LikeStatus bool      `json:"like_status" gorm:"column:is_liked"`
+	Caption    string    `json:"caption"`
+	CreatedAt  time.Time `json:"-"`
 
 	PostAge  string   `json:"post-age"`
 	MediaUrl []string `json:"media-urls" gorm:"type:text"`

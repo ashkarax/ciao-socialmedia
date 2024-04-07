@@ -12,4 +12,10 @@ type IPostRepo interface {
 	DeletePostById(*string, *string) error
 	DeletePostMedias(*string) error
 	GetPostCountOfUser(*string) (uint, error)
+
+	LikePost(*requestmodels.LikeRequest) error
+	UnLikePost(*requestmodels.LikeRequest) error
+
+	GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error)
+
 }

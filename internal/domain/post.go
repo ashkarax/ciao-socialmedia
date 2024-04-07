@@ -10,7 +10,7 @@ const (
 )
 
 type Post struct {
-	PostId uint `gorm:"primarykey"`
+	PostID uint `gorm:"primarykey"`
 
 	UserID uint  `gorm:"not null"`
 	Users  Users `gorm:"foreignKey:UserID"`
@@ -23,10 +23,10 @@ type Post struct {
 }
 
 type PostMedia struct {
-	MediaId uint `gorm:"primarykey"`
+	MediaID uint `gorm:"primarykey"`
 
-	PostId uint `gorm:"not null"`
-	Order  Post `gorm:"foreignKey:PostId"`
+	PostID uint `gorm:"not null"`
+	Post  Post `gorm:"foreignKey:PostID"`
 
 	MediaUrl string
 }

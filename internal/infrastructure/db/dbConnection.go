@@ -67,6 +67,9 @@ func ConnectDatabase(config *config.DataBase) (*gorm.DB, error) {
 	if err := DB.AutoMigrate(&domain.FollowRelationship{}); err != nil {
 		return DB, err
 	}
+	if err := DB.AutoMigrate(&domain.PostLikes{}); err != nil {
+		return DB, err
+	}
 
 	CheckAndCreateAdmin(DB)
 	return DB, nil

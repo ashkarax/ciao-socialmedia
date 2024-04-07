@@ -13,3 +13,8 @@ type AddPostData struct {
 type PostId struct {
 	PostId string `json:"postid" validate:"required,number"`
 }
+
+type LikeRequest struct {
+	PostID string `json:"postid"`
+	UserID string
+}

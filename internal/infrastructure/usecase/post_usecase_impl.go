@@ -167,3 +167,54 @@ func (r *PostUseCase) DeletePost(postId *requestmodels.PostId, userId *string) e
 
 	return nil
 }
+
+func (r *PostUseCase) LikePost(inputData *requestmodels.LikeRequest) error {
+	err := r.PostRepo.LikePost(inputData)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *PostUseCase) UnLikePost(inputData *requestmodels.LikeRequest) error {
+	err := r.PostRepo.UnLikePost(inputData)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *PostUseCase) GetAllRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error) {
+	postData, err := r.PostRepo.GetAllActiveRelatedPostsForHomeScreen(userId)
+	if err != nil {
+		return postData, err
+	}
+	for i, split := range *postData {
+		postIdString := strconv.FormatUint(uint64(split.PostId), 10)
+		postMedias, err := r.PostRepo.GetPostMediaById(&postIdString)
+		if err != nil {
+			return postData, err
+		}
+		(*postData)[i].MediaUrl = *postMedias
+
+		currentTime := time.Now()
+		duration := currentTime.Sub((*postData)[i].CreatedAt)
+
+		minutes := int(duration.Minutes())
+		hours := int(duration.Hours())
+		days := int(duration.Hours() / 24)
+		months := int(duration.Hours() / 24 / 7)
+
+		if minutes < 60 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d mins ago", minutes)
+		} else if hours < 24 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d hrs ago", hours)
+		} else if days < 30 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d dy ago", days)
+		} else {
+			(*postData)[i].PostAge = fmt.Sprintf("%d weks ago", months)
+		}
+	}
+
+	return postData, nil
+}

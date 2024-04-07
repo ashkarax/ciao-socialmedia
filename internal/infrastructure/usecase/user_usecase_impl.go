@@ -22,10 +22,11 @@ type UserUseCase struct {
 	UserRepo         interfaceRepository.IUserRepo
 	tokenSecurityKey *config.Token
 	PostRepo         interfaceRepository.IPostRepo
+	RelationRepo     interfaceRepository.IRelationRepo
 }
 
-func NewUserUseCase(userRepo interfaceRepository.IUserRepo, tokenSecurityKey *config.Token, postRepo interfaceRepository.IPostRepo) interfaceUseCase.IUserUseCase {
-	return &UserUseCase{UserRepo: userRepo, tokenSecurityKey: tokenSecurityKey, PostRepo: postRepo}
+func NewUserUseCase(userRepo interfaceRepository.IUserRepo, tokenSecurityKey *config.Token, postRepo interfaceRepository.IPostRepo, relationRepo interfaceRepository.IRelationRepo) interfaceUseCase.IUserUseCase {
+	return &UserUseCase{UserRepo: userRepo, tokenSecurityKey: tokenSecurityKey, PostRepo: postRepo, RelationRepo: relationRepo}
 }
 
 func (r *UserUseCase) UserSignUp(userData *requestmodels.UserSignUpReq) (responsemodels.SignupData, error) {
@@ -334,6 +335,12 @@ func (r *UserUseCase) UserProfile(userId *string) (*responsemodels.UserProfile, 
 	if errP != nil {
 		return nil, errP
 	}
+	followerCount, followingCount, errC := r.RelationRepo.GetFollowerAndFollowingCountofUser(userId)
+	if errC != nil {
+		return nil, errC
+	}
+	userData.FollowersCount = *followerCount
+	userData.FollowingCount = *followingCount
 	userData.PostsCount = PostCount
 
 	return userData, nil

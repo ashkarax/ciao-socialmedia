@@ -59,3 +59,17 @@ func (d *RelationRepo) GetFollowingDetailsOfUserById(userId *string) (*[]respons
 
 	return &followersData, err
 }
+
+func (d *RelationRepo) GetFollowerAndFollowingCountofUser(userId *string) (*uint, *uint, error) {
+	var counts struct {
+		FollowersCount uint `gorm:"column:followers_count"`
+		FollowingCount uint `gorm:"column:following_count"`
+	}
+	query := "SELECT (SELECT COUNT(*) FROM follow_relationships WHERE following_id = $1) AS followers_count,(SELECT COUNT(*) FROM follow_relationships WHERE follower_id = $1) AS following_count "
+	err := d.DB.Raw(query, userId).Scan(&counts).Error
+	if err != nil {
+		return nil, nil, err
+	}
+	return &counts.FollowersCount, &counts.FollowingCount, nil
+
+}

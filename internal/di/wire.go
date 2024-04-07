@@ -32,14 +32,14 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	postUseCase := usecase.NewPostUseCase(postRepository)
 	postHandler := handler.NewPostHandler(postUseCase)
 
-	userRepository := repository.NewUserRepository(DB)
-	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token, postRepository)
-	userHandler := handler.NewUserHandler(userUseCase)
-
 	relationRepository := repository.NewRelationRepo(DB)
 	relationUseCase := usecase.NewRelationUseCase(relationRepository)
 	relationHandler := handler.NewRelationHandler(relationUseCase)
 
-	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, jwtMiddleWare, userHandler, postHandler,relationHandler)
+	userRepository := repository.NewUserRepository(DB)
+	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token, postRepository, relationRepository)
+	userHandler := handler.NewUserHandler(userUseCase)
+
+	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, jwtMiddleWare, userHandler, postHandler, relationHandler)
 	return serverHttp, nil
 }

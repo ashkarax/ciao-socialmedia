@@ -123,3 +123,14 @@ func (d *PostRepo) GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]res
 	return &response, nil
 
 }
+
+func (d *PostRepo) LikeAndCommentCountsOfPost(postId *string) (string, error) {
+	var likeCount string
+
+	query := "SELECT COUNT(*) FROM post_likes WHERE post_id=?"
+	err := d.DB.Raw(query, postId).Scan(&likeCount).Error
+	if err != nil {
+		return "", err
+	}
+	return likeCount, nil
+}

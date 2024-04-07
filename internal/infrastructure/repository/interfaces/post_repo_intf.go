@@ -17,5 +17,5 @@ type IPostRepo interface {
 	UnLikePost(*requestmodels.LikeRequest) error
 
 	GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error)
-
+	LikeAndCommentCountsOfPost(postId *string) (string, error)
 }

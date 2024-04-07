@@ -195,6 +195,12 @@ func (r *PostUseCase) GetAllRelatedPostsForHomeScreen(userId *string) (*[]respon
 		if err != nil {
 			return postData, err
 		}
+		likeCount, err2 := r.PostRepo.LikeAndCommentCountsOfPost(&postIdString)
+		if err2 != nil {
+			return postData, err2
+		}
+
+		(*postData)[i].LikesCount = likeCount
 		(*postData)[i].MediaUrl = *postMedias
 
 		currentTime := time.Now()

@@ -15,6 +15,9 @@ type PostData struct {
 	Caption    string    `json:"caption"`
 	CreatedAt  time.Time `json:"-"`
 
+	LikesCount    string `json:"likes_count"`
+	CommentsCount string `json:"comments_count"`
+
 	PostAge  string   `json:"post-age"`
 	MediaUrl []string `json:"media-urls" gorm:"type:text"`
 }

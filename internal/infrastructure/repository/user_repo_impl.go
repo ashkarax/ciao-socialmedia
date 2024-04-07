@@ -147,7 +147,7 @@ func (d *UserRepo) UpdateUserPassword(email *string, hashedPassword *string) err
 
 func (d *UserRepo) GetUserDataLite(userId *string) (*responsemodels.UserProfile, error) {
 	var resp responsemodels.UserProfile
-	query := "SELECT name,user_name FROM users WHERE id=$1"
+	query := "SELECT id,name,user_name FROM users WHERE id=$1"
 	err := d.DB.Raw(query, userId).Scan(&resp).Error
 	if err != nil {
 		return &resp, err

@@ -17,7 +17,7 @@ func NewRelationRepo(db *gorm.DB) interfaceRepository.IRelationRepo {
 
 func (d *RelationRepo) InitiateFollowRelationship(data *requestmodels.FollowRequest) error {
 
-	query := "INSERT INTO follow_relationships (follower_id,following_id) VALUES($1,$2)"
+	query := "INSERT INTO follow_relationships (follower_id, following_id) VALUES ($1, $2) ON CONFLICT (follower_id, following_id) DO NOTHING;"
 	err := d.DB.Exec(query, data.UserID, data.OppositeUserID).Error
 	if err != nil {
 		return err
@@ -71,5 +71,22 @@ func (d *RelationRepo) GetFollowerAndFollowingCountofUser(userId *string) (*uint
 		return nil, nil, err
 	}
 	return &counts.FollowersCount, &counts.FollowingCount, nil
+
+}
+
+func (d *RelationRepo) UserAFollowingUserBorNot(requestData *requestmodels.FollowRequest) (bool, error) {
+	var count uint
+
+	query := "SELECT COUNT(*) FROM follow_relationships WHERE follower_id = ? AND following_id = ?"
+	err := d.DB.Raw(query, requestData.UserID, requestData.OppositeUserID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
 
 }

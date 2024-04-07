@@ -38,6 +38,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 		exploremanagement := engin.Group("/explore")
 		{
 			exploremanagement.GET("/")
+			exploremanagement.GET("/profile/:userBid", user.GetAnotherUserProfile)
 
 			searchmanagement := exploremanagement.Group("/search")
 			{
@@ -47,8 +48,8 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 		}
 		followRelationshipManagement := engin.Group("/relation")
 		{
-			followRelationshipManagement.POST("/follow", relation.Follow)
-			followRelationshipManagement.DELETE("/unfollow", relation.UnFollow)
+			followRelationshipManagement.POST("/follow/:followingId", relation.Follow)
+			followRelationshipManagement.DELETE("/unfollow/:followingId", relation.UnFollow)
 
 		}
 

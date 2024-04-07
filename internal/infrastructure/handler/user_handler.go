@@ -158,3 +158,25 @@ func (u *UserHandler) SearchUser(c *gin.Context) {
 	response := responsemodels.Responses(http.StatusOK, "users found succesfully", usersSlice, nil)
 	c.JSON(http.StatusOK, response)
 }
+
+func (u *UserHandler) GetAnotherUserProfile(c *gin.Context) {
+	var requestData requestmodels.FollowRequest
+
+	userId, _ := c.Get("userId")
+	userIdString, _ := userId.(string)
+
+	userbId := c.Param("userBid")
+
+	requestData.OppositeUserID = userbId
+	requestData.UserID = userIdString
+
+	userData, err := u.UserUseCase.UserProfileOfUserB(&requestData)
+	if err != nil {
+		finalReslt := responsemodels.Responses(http.StatusBadRequest, "failed to get user profile", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully retreival", userData, nil)
+	c.JSON(http.StatusOK, finalReslt)
+}

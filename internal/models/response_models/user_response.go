@@ -39,10 +39,17 @@ type ForgotPasswordData struct {
 }
 
 type UserProfile struct {
-	Name           string `json:"name"`
-	UserName       string `json:"username"`
-	PostsCount     uint   `json:"posts_count"`
-	FollowersCount uint   `json:"followers_count"`
-	FollowingCount uint   `json:"following_count"`
-}
+	UserId uint `json:"userid"  gorm:"column:id"`
 
+	Name              string `json:"name"`
+	UserName          string `json:"username"`
+	UserProfileImgURL string `json:"userprofileimageurl,omitempty"`
+
+	PostsCount     uint `json:"posts_count"`
+	FollowersCount uint `json:"followers_count"`
+	FollowingCount uint `json:"following_count"`
+
+	//for userB only
+	FollowedBy      string `json:"followedby,omitempty"`
+	FollowingStatus bool   `json:"following_status,omitempty"`
+}

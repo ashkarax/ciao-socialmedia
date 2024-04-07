@@ -13,4 +13,5 @@ type IRelationRepo interface {
 	GetFollowingDetailsOfUserById(userId *string) (*[]responsemodels.SearchResp, error)
 
 	GetFollowerAndFollowingCountofUser(userId *string) (*uint, *uint, error)
+	UserAFollowingUserBorNot(*requestmodels.FollowRequest) (bool, error)
 }

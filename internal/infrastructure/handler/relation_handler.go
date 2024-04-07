@@ -22,12 +22,14 @@ func (u *RelationHandler) Follow(c *gin.Context) {
 	userId, _ := c.Get("userId")
 	userIdString, _ := userId.(string)
 
-	if err := c.BindJSON(&FollowRequestData); err != nil {
-		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:no json input)", nil, err.Error())
+	followingId := c.Param("followingId")
+	if followingId == "" {
+		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:empty input)", nil, "no following id found as param")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
+	FollowRequestData.OppositeUserID = followingId
 	FollowRequestData.UserID = userIdString
 
 	err := u.RelationUseCase.Follow(&FollowRequestData)
@@ -46,12 +48,14 @@ func (u *RelationHandler) UnFollow(c *gin.Context) {
 	userId, _ := c.Get("userId")
 	userIdString, _ := userId.(string)
 
-	if err := c.BindJSON(&FollowRequestData); err != nil {
-		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:no json input)", nil, err.Error())
+	followingId := c.Param("followingId")
+	if followingId == "" {
+		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:empty input)", nil, "no following id found as param")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
+	FollowRequestData.OppositeUserID = followingId
 	FollowRequestData.UserID = userIdString
 
 	err := u.RelationUseCase.UnFollow(&FollowRequestData)
@@ -94,4 +98,3 @@ func (u *RelationHandler) GetFollowingDetails(c *gin.Context) {
 	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully fetched following info", followersInfo, nil)
 	c.JSON(http.StatusOK, finalReslt)
 }
-

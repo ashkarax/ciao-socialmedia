@@ -369,3 +369,31 @@ func (r *UserUseCase) SearchUser(searchInput *requestmodels.SearchRequest) (*[]r
 
 	return usersSlice, nil
 }
+
+func (r *UserUseCase) UserProfileOfUserB(requestData *requestmodels.FollowRequest) (*responsemodels.UserProfile, error) {
+
+	userData, errU := r.UserRepo.GetUserDataLite(&requestData.OppositeUserID)
+	if errU != nil {
+		return nil, errU
+	}
+	PostCount, errP := r.PostRepo.GetPostCountOfUser(&requestData.OppositeUserID)
+	if errP != nil {
+		return nil, errP
+	}
+	followerCount, followingCount, errC := r.RelationRepo.GetFollowerAndFollowingCountofUser(&requestData.OppositeUserID)
+	if errC != nil {
+		return nil, errC
+	}
+	relationStat, err := r.RelationRepo.UserAFollowingUserBorNot(requestData)
+	if err != nil {
+		return nil, err
+	}
+
+	userData.FollowingStatus = relationStat
+	userData.FollowersCount = *followerCount
+	userData.FollowingCount = *followingCount
+	userData.PostsCount = PostCount
+
+	return userData, nil
+
+}

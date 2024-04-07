@@ -16,6 +16,7 @@ func NewRelationUseCase(relationRepo interfaceRepository.IRelationRepo) interfac
 }
 
 func (r *RelationUseCase) Follow(data *requestmodels.FollowRequest) error {
+
 	err := r.RelationRepo.InitiateFollowRelationship(data)
 	if err != nil {
 		return err

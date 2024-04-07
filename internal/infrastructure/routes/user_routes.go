@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddleware, user *handler.UserHandler, post *handler.PostHandler) {
+func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddleware, user *handler.UserHandler, post *handler.PostHandler, relation *handler.RelationHandler) {
 
 	engin.POST("/signup", user.UserSignUp)
 	engin.POST("/verify", user.UserOTPVerication)
@@ -17,6 +17,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 	engin.Use(jwtMiddleWare.UserAuthorization)
 	{
 
+		//engin.GET("/",post.GetAllPostsByFollowers)
 		engin.GET("/profile", user.GetUserProfile)
 
 		postmanagement := engin.Group("/post")
@@ -36,6 +37,12 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 				searchmanagement.GET("/user", user.SearchUser)
 
 			}
+		}
+		followRelationshipManagement := engin.Group("/relation")
+		{
+			followRelationshipManagement.POST("/follow", relation.Follow)
+			followRelationshipManagement.DELETE("/unfollow", relation.UnFollow)
+
 		}
 
 	}

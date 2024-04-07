@@ -17,7 +17,7 @@ type ServerHttp struct {
 	config *config.PortManager
 }
 
-func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, jwtMiddleWare *JWTmiddleware.JWTmiddleware, userHandler *handler.UserHandler, postHandler *handler.PostHandler) *ServerHttp {
+func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, jwtMiddleWare *JWTmiddleware.JWTmiddleware, userHandler *handler.UserHandler, postHandler *handler.PostHandler, relationHandler *handler.RelationHandler) *ServerHttp {
 
 	engin := gin.Default()
 
@@ -32,7 +32,7 @@ func NewServerHttp(apikey *config.ApiKey, config *config.PortManager, jwtMiddleW
 	})
 
 	//routes.AdminRoutes(engin.Group("/admin"), adminHandler)
-	routes.UserRoutes(engin.Group(""),jwtMiddleWare, userHandler, postHandler)
+	routes.UserRoutes(engin.Group(""), jwtMiddleWare, userHandler, postHandler, relationHandler)
 
 	return &ServerHttp{engin: engin, config: config}
 

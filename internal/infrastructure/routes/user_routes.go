@@ -41,7 +41,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 
 			searchmanagement := exploremanagement.Group("/search")
 			{
-				searchmanagement.GET("/user", user.SearchUser)
+				searchmanagement.GET("/user/:searchtext", user.SearchUser)
 
 			}
 		}

@@ -137,13 +137,12 @@ func (u *UserHandler) GetUserProfile(c *gin.Context) {
 }
 
 func (u *UserHandler) SearchUser(c *gin.Context) {
+
 	var searchInput requestmodels.SearchRequest
 
-	if err := c.BindJSON(&searchInput); err != nil {
-		response := responsemodels.Responses(http.StatusBadRequest, "failed request(possible-reason:no json input)", nil, err.Error())
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	searchText := c.Param("searchtext")
+	searchInput.SearchText = searchText
+
 	userId, _ := c.Get("userId")
 	userIdString, _ := userId.(string)
 

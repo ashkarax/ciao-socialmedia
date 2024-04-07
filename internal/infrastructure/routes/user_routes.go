@@ -45,7 +45,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 		}
 		exploremanagement := engin.Group("/explore")
 		{
-			exploremanagement.GET("/")
+			exploremanagement.GET("/", post.GetMostLovedPostsFromGlobalUser)
 			exploremanagement.GET("/profile/:userBid", user.GetAnotherUserProfile)
 
 			searchmanagement := exploremanagement.Group("/search")

@@ -224,3 +224,44 @@ func (r *PostUseCase) GetAllRelatedPostsForHomeScreen(userId *string) (*[]respon
 
 	return postData, nil
 }
+
+func (r *PostUseCase) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsemodels.PostData, error){
+	postData, err := r.PostRepo.GetMostLovedPostsFromGlobalUser(userid)
+	if err != nil {
+		return postData, err
+	}
+	for i, split := range *postData {
+		postIdString := strconv.FormatUint(uint64(split.PostId), 10)
+		postMedias, err := r.PostRepo.GetPostMediaById(&postIdString)
+		if err != nil {
+			return postData, err
+		}
+		likeCount, err2 := r.PostRepo.LikeAndCommentCountsOfPost(&postIdString)
+		if err2 != nil {
+			return postData, err2
+		}
+
+		(*postData)[i].LikesCount = likeCount
+		(*postData)[i].MediaUrl = *postMedias
+
+		currentTime := time.Now()
+		duration := currentTime.Sub((*postData)[i].CreatedAt)
+
+		minutes := int(duration.Minutes())
+		hours := int(duration.Hours())
+		days := int(duration.Hours() / 24)
+		months := int(duration.Hours() / 24 / 7)
+
+		if minutes < 60 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d mins ago", minutes)
+		} else if hours < 24 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d hrs ago", hours)
+		} else if days < 30 {
+			(*postData)[i].PostAge = fmt.Sprintf("%d dy ago", days)
+		} else {
+			(*postData)[i].PostAge = fmt.Sprintf("%d weks ago", months)
+		}
+	}
+
+	return postData, nil
+}

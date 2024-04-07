@@ -149,3 +149,17 @@ func (u *PostHandler) GetAllRelatedPostsForHomeScreen(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (u *PostHandler) GetMostLovedPostsFromGlobalUser(c *gin.Context) {
+	UserId, _ := c.Get("userId")
+	UserIdString, _ := UserId.(string)
+
+	resPostData, err := u.PostUseCase.GetMostLovedPostsFromGlobalUser(&UserIdString)
+	if err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "can't fetch Posts", nil, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := responsemodels.Responses(http.StatusOK, "Post fetched succesfully", resPostData, nil)
+	c.JSON(http.StatusOK, response)
+}

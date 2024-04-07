@@ -134,3 +134,15 @@ func (d *PostRepo) LikeAndCommentCountsOfPost(postId *string) (string, error) {
 	}
 	return likeCount, nil
 }
+
+func (d *PostRepo) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsemodels.PostData, error) {
+	var response []responsemodels.PostData
+
+	query := "SELECT posts.*,COUNT(post_likes.post_id) AS like_count,CASE WHEN EXISTS (SELECT 1 FROM post_likes WHERE post_likes.post_id = posts.post_id AND post_likes.user_id = $1) THEN TRUE ELSE FALSE END AS is_liked FROM posts LEFT JOIN post_likes ON posts.post_id = post_likes.post_id WHERE posts.post_status = 'normal' GROUP BY posts.post_id ORDER BY like_count DESC, posts.created_at DESC;"
+	err := d.DB.Raw(query, userid).Scan(&response)
+	if err.Error != nil {
+		return &response, err.Error
+	}
+	return &response, nil
+
+}

@@ -18,4 +18,6 @@ type IPostRepo interface {
 
 	GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error)
 	LikeAndCommentCountsOfPost(postId *string) (string, error)
+
+	GetMostLovedPostsFromGlobalUser(*string) (*[]responsemodels.PostData, error)
 }

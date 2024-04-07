@@ -15,4 +15,5 @@ type IPostUseCase interface {
 	UnLikePost(*requestmodels.LikeRequest) error
 
 	GetAllRelatedPostsForHomeScreen(*string) (*[]responsemodels.PostData, error)
+	GetMostLovedPostsFromGlobalUser(*string) (*[]responsemodels.PostData, error)
 }

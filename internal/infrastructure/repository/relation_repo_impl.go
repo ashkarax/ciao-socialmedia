@@ -3,6 +3,7 @@ package repository
 import (
 	interfaceRepository "github.com/ashkarax/ciao-socialmedia/internal/infrastructure/repository/interfaces"
 	requestmodels "github.com/ashkarax/ciao-socialmedia/internal/models/request_models"
+	responsemodels "github.com/ashkarax/ciao-socialmedia/internal/models/response_models"
 	"gorm.io/gorm"
 )
 
@@ -33,4 +34,28 @@ func (d *RelationRepo) InitiateUnFollowRelationship(data *requestmodels.FollowRe
 	}
 	return nil
 
+}
+
+func (d *RelationRepo) GetFollowersDetailsOfUserById(userId *string) (*[]responsemodels.SearchResp, error) {
+	var followersData []responsemodels.SearchResp
+
+	query := "SELECT * FROM follow_relationships JOIN users ON follow_relationships.following_id=users.id WHERE following_id=$1"
+	err := d.DB.Raw(query, userId).Scan(&followersData).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &followersData, err
+}
+
+func (d *RelationRepo) GetFollowingDetailsOfUserById(userId *string) (*[]responsemodels.SearchResp, error) {
+	var followersData []responsemodels.SearchResp
+
+	query := "SELECT * FROM follow_relationships JOIN users ON follow_relationships.following_id=users.id WHERE follower_id=$1"
+	err := d.DB.Raw(query, userId).Scan(&followersData).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &followersData, err
 }

@@ -20,6 +20,13 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 		//engin.GET("/",post.GetAllPostsByFollowers)
 		engin.GET("/profile", user.GetUserProfile)
 
+		profilemanagement := engin.Group("/profile")
+		{
+			profilemanagement.GET("/", user.GetUserProfile)
+			profilemanagement.GET("/followers", relation.GetFollowersDetails)
+			profilemanagement.GET("/following", relation.GetFollowingDetails)
+		}
+
 		postmanagement := engin.Group("/post")
 		{
 			postmanagement.POST("/", post.AddNewPost)

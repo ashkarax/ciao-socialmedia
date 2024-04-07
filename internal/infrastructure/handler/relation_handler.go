@@ -37,7 +37,7 @@ func (u *RelationHandler) Follow(c *gin.Context) {
 		return
 	}
 
-	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully", nil, nil)
+	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully followed", nil, nil)
 	c.JSON(http.StatusOK, finalReslt)
 }
 
@@ -65,4 +65,33 @@ func (u *RelationHandler) UnFollow(c *gin.Context) {
 	c.JSON(http.StatusOK, finalReslt)
 }
 
+func (u *RelationHandler) GetFollowersDetails(c *gin.Context) {
+	userId, _ := c.Get("userId")
+	userIdString, _ := userId.(string)
+
+	followersInfo, err := u.RelationUseCase.GetFollowersDetailsOfUser(&userIdString)
+	if err != nil {
+		finalReslt := responsemodels.Responses(http.StatusBadRequest, "failed to get followers info", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully fetched followers info", followersInfo, nil)
+	c.JSON(http.StatusOK, finalReslt)
+}
+
+func (u *RelationHandler) GetFollowingDetails(c *gin.Context) {
+	userId, _ := c.Get("userId")
+	userIdString, _ := userId.(string)
+
+	followersInfo, err := u.RelationUseCase.GetFollowingDetailsOfUser(&userIdString)
+	if err != nil {
+		finalReslt := responsemodels.Responses(http.StatusBadRequest, "failed to get following info", nil, err.Error())
+		c.JSON(http.StatusBadRequest, finalReslt)
+		return
+	}
+
+	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully fetched following info", followersInfo, nil)
+	c.JSON(http.StatusOK, finalReslt)
+}
 

@@ -115,7 +115,7 @@ func (d *PostRepo) UnLikePost(inputData *requestmodels.LikeRequest) error {
 func (d *PostRepo) GetAllActiveRelatedPostsForHomeScreen(userId *string) (*[]responsemodels.PostData, error) {
 	var response []responsemodels.PostData
 
-	query := "SELECT posts.*,CASE WHEN post_likes.user_id IS NULL THEN FALSE ELSE TRUE END AS is_liked FROM posts INNER JOIN follow_relationships ON posts.user_id = follow_relationships.following_id LEFT JOIN (SELECT post_id, user_id FROM post_likes WHERE user_id = $1) AS post_likes ON posts.post_id = post_likes.post_id WHERE follow_relationships.follower_id = $1 AND posts.post_status=$2 ORDER BY posts.created_at DESC;"
+	query := "SELECT posts.*,CASE WHEN post_likes.user_id IS NULL THEN FALSE ELSE TRUE END AS is_liked,users.id,users.user_name FROM posts INNER JOIN follow_relationships ON posts.user_id = follow_relationships.following_id LEFT JOIN (SELECT post_id, user_id FROM post_likes WHERE user_id = $1) AS post_likes ON posts.post_id = post_likes.post_id INNER JOIN users ON posts.user_id = users.id WHERE follow_relationships.follower_id = $1 AND posts.post_status = $2 ORDER BY posts.created_at DESC;"
 	err := d.DB.Raw(query, userId, "normal").Scan(&response)
 	if err.Error != nil {
 		return &response, err.Error
@@ -138,7 +138,7 @@ func (d *PostRepo) LikeAndCommentCountsOfPost(postId *string) (string, error) {
 func (d *PostRepo) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsemodels.PostData, error) {
 	var response []responsemodels.PostData
 
-	query := "SELECT posts.*,COUNT(post_likes.post_id) AS like_count,CASE WHEN EXISTS (SELECT 1 FROM post_likes WHERE post_likes.post_id = posts.post_id AND post_likes.user_id = $1) THEN TRUE ELSE FALSE END AS is_liked FROM posts LEFT JOIN post_likes ON posts.post_id = post_likes.post_id WHERE posts.post_status = 'normal' GROUP BY posts.post_id ORDER BY like_count DESC, posts.created_at DESC;"
+	query := "SELECT posts.*,COUNT(post_likes.post_id) AS like_count,CASE WHEN EXISTS (SELECT 1 FROM post_likes WHERE post_likes.post_id = posts.post_id AND post_likes.user_id = $1) THEN TRUE ELSE FALSE END AS is_liked,users.id AS id,users.user_name FROM posts LEFT JOIN post_likes ON posts.post_id = post_likes.post_id LEFT JOIN users ON posts.user_id = users.id WHERE posts.post_status = 'normal' GROUP BY posts.post_id, users.id, users.user_name ORDER BY like_count DESC,posts.created_at DESC;"
 	err := d.DB.Raw(query, userid).Scan(&response)
 	if err.Error != nil {
 		return &response, err.Error

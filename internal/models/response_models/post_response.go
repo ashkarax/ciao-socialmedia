@@ -10,6 +10,10 @@ type AddPostResp struct {
 }
 
 type PostData struct {
+	UserId            uint   `json:"userid"  gorm:"column:id"`
+	UserName          string `json:"username"`
+	UserProfileImgURL string `json:"userprofileimageurl"`
+
 	PostId     uint      `json:"postid"`
 	LikeStatus bool      `json:"like_status" gorm:"column:is_liked"`
 	Caption    string    `json:"caption"`

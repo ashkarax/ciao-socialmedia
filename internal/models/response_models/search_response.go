@@ -8,5 +8,5 @@ type SearchResp struct {
 
 	//for userB only
 	FollowedBy      string `json:"followedby,omitempty"`
-	FollowingStatus bool   `json:"following_status,omitempty" gorm:"column:is_following"`
+	FollowingStatus bool   `json:"following_status" gorm:"column:is_following"`
 }

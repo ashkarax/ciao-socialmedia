@@ -51,5 +51,5 @@ type UserProfile struct {
 
 	//for userB only
 	FollowedBy      string `json:"followedby,omitempty"`
-	FollowingStatus bool   `json:"following_status,omitempty"`
+	FollowingStatus bool   `json:"following_status"`
 }

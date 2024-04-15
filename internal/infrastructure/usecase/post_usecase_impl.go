@@ -225,7 +225,7 @@ func (r *PostUseCase) GetAllRelatedPostsForHomeScreen(userId *string) (*[]respon
 	return postData, nil
 }
 
-func (r *PostUseCase) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsemodels.PostData, error){
+func (r *PostUseCase) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsemodels.PostData, error) {
 	postData, err := r.PostRepo.GetMostLovedPostsFromGlobalUser(userid)
 	if err != nil {
 		return postData, err
@@ -264,4 +264,37 @@ func (r *PostUseCase) GetMostLovedPostsFromGlobalUser(userid *string) (*[]respon
 	}
 
 	return postData, nil
+}
+
+func (r *PostUseCase) EditPost(editPostData *requestmodels.EditPost) (*responsemodels.EditPostResp, error) {
+	var respPostEdit responsemodels.EditPostResp
+
+	fmt.Println(editPostData)
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(editPostData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Caption":
+					respPostEdit.Caption = "should contain less than 60 letters"
+				case "UserId":
+					respPostEdit.UserId = "No userId got from header"
+				case "PostId":
+					respPostEdit.PostId = "no postid found in request"
+
+				}
+			}
+			fmt.Println(err)
+			return &respPostEdit, err
+		}
+	}
+	editErr := r.PostRepo.EditPost(editPostData)
+	if editErr != nil {
+		fmt.Println(editErr)
+		return &respPostEdit, editErr
+	}
+	return &respPostEdit, nil
+
 }

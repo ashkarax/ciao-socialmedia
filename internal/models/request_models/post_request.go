@@ -18,3 +18,9 @@ type LikeRequest struct {
 	PostID string `json:"postid"`
 	UserID string
 }
+
+type EditPost struct {
+	Caption string `form:"caption" validate:"lte=60"`
+	UserId  string `validate:"required"`
+	PostId  string `json:"postid" validate:"required,number"`
+}

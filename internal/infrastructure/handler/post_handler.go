@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	interfaceUseCase "github.com/ashkarax/ciao-socialmedia/internal/infrastructure/usecase/interfaces"
@@ -161,5 +162,30 @@ func (u *PostHandler) GetMostLovedPostsFromGlobalUser(c *gin.Context) {
 	}
 
 	response := responsemodels.Responses(http.StatusOK, "Post fetched succesfully", resPostData, nil)
+	c.JSON(http.StatusOK, response)
+}
+
+func (u *PostHandler) EditPost(c *gin.Context) {
+	var editInput requestmodels.EditPost
+
+	UserId, _ := c.Get("userId")
+	UserIdString, _ := UserId.(string)
+
+	editInput.UserId = UserIdString
+
+	if err := c.ShouldBind(&editInput); err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "can't edit post", nil, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	fmt.Println("from handler:", editInput)
+	editResp, err := u.PostUseCase.EditPost(&editInput)
+	if err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "can't edit Post", editResp, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := responsemodels.Responses(http.StatusOK, "Post edited succesfully", nil, nil)
 	c.JSON(http.StatusOK, response)
 }

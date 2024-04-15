@@ -20,4 +20,6 @@ type IPostRepo interface {
 	LikeAndCommentCountsOfPost(postId *string) (string, error)
 
 	GetMostLovedPostsFromGlobalUser(*string) (*[]responsemodels.PostData, error)
+
+	EditPost(*requestmodels.EditPost) error
 }

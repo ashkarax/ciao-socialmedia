@@ -146,3 +146,16 @@ func (d *PostRepo) GetMostLovedPostsFromGlobalUser(userid *string) (*[]responsem
 	return &response, nil
 
 }
+
+func (d *PostRepo) EditPost(inputData *requestmodels.EditPost) error {
+	query := "UPDATE posts SET caption=$1 WHERE post_id=$2 AND user_id=$3;"
+	res := d.DB.Exec(query, inputData.Caption, inputData.PostId, inputData.UserId)
+	if res.RowsAffected == 0 {
+		return errors.New("enter a valid post id")
+	}
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
+}

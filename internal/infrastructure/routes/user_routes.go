@@ -32,7 +32,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 			postmanagement.POST("/", post.AddNewPost)
 			postmanagement.GET("/", post.GetAllPostByUser)
 			postmanagement.DELETE("/", post.DeletePost)
-			//postmanagement.PATCH("/", post.EditPost)
+			postmanagement.PATCH("/", post.EditPost)
 
 			postmanagement.GET("/userrelatedposts", post.GetAllRelatedPostsForHomeScreen)
 

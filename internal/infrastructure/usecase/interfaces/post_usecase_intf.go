@@ -16,4 +16,6 @@ type IPostUseCase interface {
 
 	GetAllRelatedPostsForHomeScreen(*string) (*[]responsemodels.PostData, error)
 	GetMostLovedPostsFromGlobalUser(*string) (*[]responsemodels.PostData, error)
+
+	EditPost(*requestmodels.EditPost) (*responsemodels.EditPostResp, error)
 }

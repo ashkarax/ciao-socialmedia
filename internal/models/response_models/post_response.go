@@ -25,3 +25,9 @@ type PostData struct {
 	PostAge  string   `json:"post-age"`
 	MediaUrl []string `json:"media-urls" gorm:"type:text"`
 }
+
+type EditPostResp struct {
+	Caption string `json:"caption"`
+	PostId  string `json:"postid"`
+	UserId  string `json:"userid" `
+}

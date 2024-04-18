@@ -13,16 +13,18 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 	engin.POST("/login", user.UserLogin)
 	engin.POST("/forgotpassword", user.ForgotPasswordRequest)
 	engin.PATCH("/resetpassword", user.ResetPassword)
+	engin.GET("/accessregenerator", jwtMiddleWare.AccessRegenerator)
+
 
 	authmanagement := engin.Group("/auth")
 	{
 		authmanagement.GET("/credentials", auth2o.Auth2oCredentialsForMobileApp)
 	}
 
+
 	engin.Use(jwtMiddleWare.UserAuthorization)
 	{
 
-		//engin.GET("/",post.GetAllPostsByFollowers)
 		engin.GET("/profile", user.GetUserProfile)
 
 		profilemanagement := engin.Group("/profile")

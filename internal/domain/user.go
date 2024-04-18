@@ -16,7 +16,7 @@ const (
 type Users struct {
 	gorm.Model
 	Name     string
-	UserName string 
+	UserName string
 	Email    string
 	Password string
 	Status   status `gorm:"default:pending"`

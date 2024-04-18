@@ -6,13 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddleware, user *handler.UserHandler, post *handler.PostHandler, relation *handler.RelationHandler) {
+func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddleware, user *handler.UserHandler, post *handler.PostHandler, relation *handler.RelationHandler, auth2o *handler.Auth2oHandler) {
 
 	engin.POST("/signup", user.UserSignUp)
 	engin.POST("/verify", user.UserOTPVerication)
 	engin.POST("/login", user.UserLogin)
 	engin.POST("/forgotpassword", user.ForgotPasswordRequest)
 	engin.PATCH("/resetpassword", user.ResetPassword)
+
+	authmanagement := engin.Group("/auth")
+	{
+		authmanagement.GET("/credentials", auth2o.Auth2oCredentialsForMobileApp)
+	}
 
 	engin.Use(jwtMiddleWare.UserAuthorization)
 	{

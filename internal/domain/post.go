@@ -26,7 +26,7 @@ type PostMedia struct {
 	MediaID uint `gorm:"primarykey"`
 
 	PostID uint `gorm:"not null"`
-	Post  Post `gorm:"foreignKey:PostID"`
+	Post   Post `gorm:"foreignKey:PostID"`
 
 	MediaUrl string
 }

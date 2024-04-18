@@ -41,6 +41,14 @@ type AWS struct {
 	Endpoint   string `mapstructure:"AWS_ENDPOINT"`
 }
 
+type Auth2o struct {
+	ClientId                string `mapstructure:"CLIENT_ID"`
+	ProjectId               string `mapstructure:"PROJECT_ID"`
+	AuthUri                 string `mapstructure:"AUTH_URI"`
+	TokenUri                string `mapstructure:"TOKEN_URI"`
+	AuthProviderX509CentUrl string `mapstructure:"AUTH_PROVIDER_X509_CENT_URL"`
+}
+
 type Config struct {
 	ApiKey   ApiKey
 	PortMngr PortManager
@@ -48,6 +56,7 @@ type Config struct {
 	Token    Token
 	Smtp     Smtp
 	AwsS3    AWS
+	Auth     Auth2o
 }
 
 func LoadConfig() (*Config, error) {
@@ -57,6 +66,7 @@ func LoadConfig() (*Config, error) {
 	var smtp Smtp
 	var apikey ApiKey
 	var awsS3 AWS
+	var Auth Auth2o
 
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
@@ -91,8 +101,12 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = viper.Unmarshal(&Auth)
+	if err != nil {
+		return nil, err
+	}
 
-	config := Config{ApiKey: apikey, PortMngr: portmngr, DB: db, Token: token, Smtp: smtp, AwsS3: awsS3}
+	config := Config{ApiKey: apikey, PortMngr: portmngr, DB: db, Token: token, Smtp: smtp, AwsS3: awsS3, Auth: Auth}
 	return &config, nil
 
 }

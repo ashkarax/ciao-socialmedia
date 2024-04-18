@@ -11,5 +11,4 @@ type IRelationUseCase interface {
 
 	GetFollowersDetailsOfUser(*string) (*[]responsemodels.SearchResp, error)
 	GetFollowingDetailsOfUser(*string) (*[]responsemodels.SearchResp, error)
-
 }

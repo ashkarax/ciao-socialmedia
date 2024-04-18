@@ -40,6 +40,8 @@ func InitializeAPI(config *config.Config) (*server.ServerHttp, error) {
 	userUseCase := usecase.NewUserUseCase(userRepository, &config.Token, postRepository, relationRepository)
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, jwtMiddleWare, userHandler, postHandler, relationHandler)
+	auth2oHandler := handler.NewAuth2oHandler(&config.Auth)
+
+	serverHttp := server.NewServerHttp(&config.ApiKey, &config.PortMngr, jwtMiddleWare, userHandler, postHandler, relationHandler,auth2oHandler)
 	return serverHttp, nil
 }

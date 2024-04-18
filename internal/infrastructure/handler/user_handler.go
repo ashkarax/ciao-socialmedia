@@ -180,5 +180,3 @@ func (u *UserHandler) GetAnotherUserProfile(c *gin.Context) {
 	finalReslt := responsemodels.Responses(http.StatusOK, "succesfully retreival", userData, nil)
 	c.JSON(http.StatusOK, finalReslt)
 }
-
-

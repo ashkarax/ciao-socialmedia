@@ -13,7 +13,7 @@ func UserRoutes(engin *gin.RouterGroup, jwtMiddleWare *JWTmiddleware.JWTmiddlewa
 	engin.POST("/login", user.UserLogin)
 	engin.POST("/forgotpassword", user.ForgotPasswordRequest)
 	engin.PATCH("/resetpassword", user.ResetPassword)
-	engin.GET("/accessregenerator", jwtMiddleWare.AccessRegenerator)
+	engin.GET("/accessgenerator", jwtMiddleWare.AccessRegenerator)
 
 
 	authmanagement := engin.Group("/auth")

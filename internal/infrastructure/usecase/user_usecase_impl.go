@@ -395,5 +395,50 @@ func (r *UserUseCase) UserProfileOfUserB(requestData *requestmodels.FollowReques
 	userData.PostsCount = PostCount
 
 	return userData, nil
+}
+
+func (r *UserUseCase) EditUserDetails(editInput *requestmodels.EditUserProfile) (*responsemodels.EditUserProfileResp, error) {
+	var respEditUsr responsemodels.EditUserProfileResp
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(editInput)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "Name":
+					respEditUsr.Name = "should be a valid Name. "
+				case "UserName":
+					respEditUsr.UserName = "should be a valid username. "
+				case "Bio":
+					respEditUsr.Bio = "Bio can't exceed 60 characters "
+				case "Links":
+					respEditUsr.Links = "Links can't exceed 20 characters"
+				}
+			}
+		}
+		return &respEditUsr, errors.New("did't fullfill the signup requirement ")
+	}
+
+	userData, errU := r.UserRepo.GetUserDataLite(&editInput.UserId)
+	if errU != nil {
+		return nil, errU
+	}
+
+	if userData.UserName != editInput.UserName {
+
+		if isUserExistUserName := r.UserRepo.IsUserExistWithSameUserName(editInput.UserName); isUserExistUserName {
+			respEditUsr.IsUserExist = "User Exist ,change username"
+			return &respEditUsr, errors.New("user exists, try again with another username")
+		}
+
+	}
+
+	err = r.UserRepo.UpdateUserDetails(editInput)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 
 }

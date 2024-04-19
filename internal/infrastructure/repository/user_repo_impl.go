@@ -147,10 +147,12 @@ func (d *UserRepo) UpdateUserPassword(email *string, hashedPassword *string) err
 
 func (d *UserRepo) GetUserDataLite(userId *string) (*responsemodels.UserProfile, error) {
 	var resp responsemodels.UserProfile
-	query := "SELECT id,name,user_name FROM users WHERE id=$1"
-	err := d.DB.Raw(query, userId).Scan(&resp).Error
-	if err != nil {
-		return &resp, err
+	query := "SELECT id,name,user_name,bio,links,profile_img_url FROM users WHERE id=$1"
+	err := d.DB.Raw(query, userId).Scan(&resp)
+	if err.Error != nil {
+		return &resp, err.Error
+	} else if err.RowsAffected == 0 {
+		return nil, errors.New("no user with the specified user id found")
 	}
 	return &resp, nil
 }
@@ -163,4 +165,14 @@ func (d *UserRepo) SearchUserByNameOrUserName(searchInput *requestmodels.SearchR
 		return nil, err
 	}
 	return &resp, nil
+}
+
+func (d *UserRepo) UpdateUserDetails(editInput *requestmodels.EditUserProfile) error {
+	query := "UPDATE users SET name=$1,user_name=$2,bio=$3,links=$4 WHERE id=$5"
+	err := d.DB.Exec(query, editInput.Name, editInput.UserName, editInput.Bio, editInput.Links, editInput.UserId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

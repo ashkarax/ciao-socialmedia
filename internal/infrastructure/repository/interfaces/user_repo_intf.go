@@ -23,4 +23,6 @@ type IUserRepo interface {
 	GetUserDataLite(*string) (*responsemodels.UserProfile, error)
 
 	SearchUserByNameOrUserName(*requestmodels.SearchRequest) (*[]responsemodels.SearchResp, error)
+
+	UpdateUserDetails(*requestmodels.EditUserProfile) error
 }

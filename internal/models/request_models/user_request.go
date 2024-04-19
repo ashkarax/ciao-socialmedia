@@ -26,3 +26,12 @@ type ForgotPasswordData struct {
 	Password        string `json:"password" validate:"required,gte=3"`
 	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=Password"`
 }
+
+type EditUserProfile struct {
+	Name     string `json:"name" validate:"required,gte=3"`
+	UserName string `json:"username" validate:"required,gte=3"`
+	Bio      string `json:"bio" validate:"lte=50"`
+	Links    string `json:"links" validate:"lte=25"`
+
+	UserId string
+}

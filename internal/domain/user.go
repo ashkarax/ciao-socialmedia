@@ -15,9 +15,12 @@ const (
 
 type Users struct {
 	gorm.Model
-	Name     string
-	UserName string
-	Email    string
-	Password string
-	Status   status `gorm:"default:pending"`
+	Name          string
+	UserName      string
+	Email         string
+	Password      string
+	Bio           string
+	ProfileImgUrl string
+	Links         string
+	Status        status `gorm:"default:pending"`
 }

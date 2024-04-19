@@ -18,4 +18,6 @@ type IUserUseCase interface {
 	SearchUser(*requestmodels.SearchRequest) (*[]responsemodels.SearchResp, error)
 
 	UserProfileOfUserB(*requestmodels.FollowRequest) (*responsemodels.UserProfile, error)
+
+	EditUserDetails(*requestmodels.EditUserProfile) (*responsemodels.EditUserProfileResp, error)
 }

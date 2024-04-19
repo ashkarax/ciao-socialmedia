@@ -43,7 +43,9 @@ type UserProfile struct {
 
 	Name              string `json:"name"`
 	UserName          string `json:"username"`
-	UserProfileImgURL string `json:"userprofileimageurl,omitempty"`
+	Bio               string `json:"bio"`
+	Links             string `json:"links"`
+	UserProfileImgURL string `json:"userprofileimageurl"`
 
 	PostsCount     uint `json:"posts_count"`
 	FollowersCount uint `json:"followers_count"`
@@ -52,4 +54,13 @@ type UserProfile struct {
 	//for userB only
 	FollowedBy      string `json:"followedby,omitempty"`
 	FollowingStatus bool   `json:"following_status"`
+}
+
+type EditUserProfileResp struct {
+	Name     string `json:"name,omitempty" `
+	UserName string `json:"username,omitempty" `
+	Bio      string `json:"bio,omitempty"`
+	Links    string `json:"links,omitempty"`
+
+	IsUserExist string `json:"isuserexist,omitempty"`
 }

@@ -136,6 +136,30 @@ func (u *UserHandler) GetUserProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, finalReslt)
 }
 
+func (u *UserHandler) EditUserProfile(c *gin.Context) {
+	var editInput requestmodels.EditUserProfile
+
+	UserId, _ := c.Get("userId")
+	UserIdString, _ := UserId.(string)
+
+	editInput.UserId = UserIdString
+
+	if err := c.ShouldBind(&editInput); err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "can't edit user details", nil, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	editResp, err := u.UserUseCase.EditUserDetails(&editInput)
+	if err != nil {
+		response := responsemodels.Responses(http.StatusBadRequest, "can't edit user details", editResp, err.Error())
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := responsemodels.Responses(http.StatusOK, "user details edited succesfully", nil, nil)
+	c.JSON(http.StatusOK, response)
+}
+
 func (u *UserHandler) SearchUser(c *gin.Context) {
 
 	var searchInput requestmodels.SearchRequest
